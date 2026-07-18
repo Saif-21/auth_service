@@ -1,23 +1,36 @@
-import APIError from "@/core/errors/api-error";
-import { authRepository } from "../repository/auth.repository";
+import APIError from '@/core/errors/api-error';
+import { authRepository } from '../repository/auth.repository';
 
 class AuthService {
     async registerUser(data: any) {
-        const isEmailExists = await authRepository.findUserByEmail(data.email);
+        const existingUser = await authRepository.findUserByEmailOrPhone(
+            data.email,
+            data.phone,
+        );
 
-        if (isEmailExists) {
-            throw new APIError(400, "User with this email already exists");
+        if (existingUser) {
+            if (existingUser.email === data.email || existingUser.phone === data.phone) {
+                throw new APIError(400, 'User with this email or phone number already exists');
+            }
         }
 
-        
         return {
             success: true,
             statusCode: 201,
-            message: "User registered successfully",
+            message: 'User registered successfully',
             data: {
                 Name: 'John Doe',
-            }
-        }
+            },
+        };
+
+        return {
+            success: true,
+            statusCode: 201,
+            message: 'User registered successfully',
+            data: {
+                Name: 'John Doe',
+            },
+        };
     }
 }
 
