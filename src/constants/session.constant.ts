@@ -1,0 +1,4 @@
+export const SESSION_PLATFORM_WEB = 1;
+export const SESSION_PLATFORM_MOBILE = 2;
+export const SESSION_PLATFORM_DESKTOP = 3;
+export const SESSION_PLATFORM_API = 4;

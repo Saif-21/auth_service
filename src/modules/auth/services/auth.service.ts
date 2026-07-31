@@ -22,15 +22,6 @@ class AuthService {
                 Name: 'John Doe',
             },
         };
-
-        return {
-            success: true,
-            statusCode: 201,
-            message: 'User registered successfully',
-            data: {
-                Name: 'John Doe',
-            },
-        };
     }
 }
 
