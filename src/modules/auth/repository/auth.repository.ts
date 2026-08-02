@@ -26,6 +26,11 @@ class AuthRepository {
     async createUser(data: Partial<IUser>) {
         return userModel.create(data);
     }
+
+    async findUserByRole(roleId: string) {
+        return userModel.find({ role: roleId });
+    }
+    
 }
 
 export const authRepository = new AuthRepository();

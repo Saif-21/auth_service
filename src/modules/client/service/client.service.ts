@@ -11,17 +11,17 @@ class ClientService {
      */
     async validateClient(clientId: string): Promise<IClientDocument> {
         if (!clientId) {
-            throw new APIError(400, 'Client Id is required.');
+            throw APIError.badRequest('Client Id is required.');
         }
 
         const client = await clientRepository.findByClientId(clientId);
 
         if (!client) {
-            throw new APIError(401, 'Invalid client.');
+            throw APIError.unauthorized('Invalid client.');
         }
 
         if (!client.isActive) {
-            throw new APIError(403, 'Client is inactive.');
+            throw APIError.forbidden('Client is inactive.');
         }
 
         return client;
@@ -48,7 +48,7 @@ class ClientService {
         const exists = await clientRepository.findByClientId(payload.clientId);
 
         if (exists) {
-            throw new APIError(409, 'Client already exists.');
+            throw APIError.conflict('Client already exists.');
         }
 
         return clientRepository.create(payload);
@@ -64,7 +64,7 @@ class ClientService {
         const client = await clientRepository.findById(id);
 
         if (!client) {
-            throw new APIError(404, 'Client not found.');
+            throw APIError.notFound('Client not found.');
         }
 
         return clientRepository.update(id, payload) as Promise<IClientDocument>;
@@ -77,7 +77,7 @@ class ClientService {
         const client = await clientRepository.findById(id);
 
         if (!client) {
-            throw new APIError(404, 'Client not found.');
+            throw APIError.notFound('Client not found.');
         }
 
         await clientRepository.activate(id);
@@ -90,7 +90,7 @@ class ClientService {
         const client = await clientRepository.findById(id);
 
         if (!client) {
-            throw new APIError(404, 'Client not found.');
+            throw APIError.notFound('Client not found.');
         }
 
         await clientRepository.deactivate(id);
