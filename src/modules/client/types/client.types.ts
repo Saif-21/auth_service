@@ -13,17 +13,11 @@ export enum TokenTransport {
 
 export interface IClient {
     name: string;
-
     clientId: string;
-
     clientSecret: string;
-
     platform: ClientPlatform;
-
     tokenTransport: TokenTransport;
-
     allowedOrigins: string[];
-
     isActive: boolean;
 }
 

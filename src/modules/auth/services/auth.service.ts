@@ -1,7 +1,7 @@
 import APIError from '@/core/errors/api-error';
 import { authRepository } from '../repository/auth.repository';
 import { RegisterDTO } from '../dto/register.dto';
-import clientService from '@/modules/client/service/client.service';
+import clientService from '@/modules/client/services/client.service';
 import { roleRepository } from '@/modules/Role/repository/role.repository';
 
 class AuthService {

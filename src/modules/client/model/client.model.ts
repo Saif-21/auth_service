@@ -26,6 +26,7 @@ const ClientSchema = new Schema<IClientDocument>(
             type: String,
             required: true,
             trim: true,
+            select: false,
         },
 
         platform: {
