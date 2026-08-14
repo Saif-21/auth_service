@@ -5,6 +5,7 @@ import clientService from '@/modules/client/services/client.service';
 import { roleRepository } from '@/modules/Role/repository/role.repository';
 import jwtUtil from '@/utils/jwt.util';
 import sessionService from '@/modules/session/service/session.service';
+import { LoginDTO } from '../dto/login.dto';
 
 class AuthService {
     async registerUser(data: RegisterDTO) {
@@ -90,6 +91,82 @@ class AuthService {
             success: true,
             statusCode: 201,
             message: 'User registered successfully',
+            data: {
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                },
+                accessToken,
+                refreshToken,
+            },
+            tokenTransport: client.tokenTransport,
+        };
+    }
+
+    async loginUser(data: LoginDTO) {
+        const client = await clientService.validateClient(data.clientId);
+        data.email = data.email.trim().toLowerCase();
+        const user = await authRepository.findUserByEmail(data.email);
+
+        if (!user) {
+            throw APIError.unauthorized('Invalid email or password.');
+        }
+
+        if (!user.isActive) {
+            throw APIError.forbidden('Your account is inactive.');
+        }
+
+        const passwordValid = await user.comparePassword(data.password);
+
+        if (!passwordValid) {
+            throw APIError.unauthorized('Invalid email or password.');
+        }
+
+        const role = user.role;
+        if (!role) {
+            throw APIError.internal('User role is not configured.');
+        }
+
+        const permissions = role.permissions.map(
+            (permission: any) => permission.slug,
+        );
+        const refreshToken = jwtUtil.generateRefreshToken();
+        const refreshTokenHash = jwtUtil.hashRefreshToken(refreshToken);
+
+        const refreshTokenExpiresAt = new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
+        );
+
+        const session = await sessionService.createSession({
+            userId: user._id,
+            clientId: client._id,
+            refreshTokenHash,
+            deviceId: data.deviceId ?? null,
+            deviceName: data.deviceName ?? null,
+            platform: client.platform,
+            browser: data.browser ?? null,
+            os: data.os ?? null,
+            ipAddress: data.ipAddress,
+            userAgent: data.userAgent,
+            expiresAt: refreshTokenExpiresAt,
+            lastUsedAt: new Date(),
+            isRevoked: false,
+        });
+
+        const accessToken = jwtUtil.generateAccessToken({
+            sub: user._id.toString(),
+            sessionId: session._id.toString(),
+            role: role.slug,
+            permissions,
+            clientId: client.clientId,
+        });
+
+        return {
+            success: true,
+            statusCode: 200,
+            message: 'Login successful.',
             data: {
                 user: {
                     id: user._id,

@@ -1,16 +1,17 @@
-import { Document } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export interface IPermission {
+    _id?: Types.ObjectId;
     name: string;
     slug: string;
-    module: string;
     action: string;
-    description?: string;
+    module: string,
+    resource: string;
     isSystem: boolean;
-    isActive: boolean;
+    description?: string | null;
+    isActive?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
-export interface IPermissionDocument extends IPermission, Document {
-    createdAt: Date;
-    updatedAt: Date;
-}
+export type IPermissionDocument = HydratedDocument<IPermission>;

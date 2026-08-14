@@ -50,3 +50,27 @@ export const registerJoiSchema = Joi.object({
             'any.required': 'Password is required',
         }),
 });
+
+export const LoginJoiSchema = Joi.object({
+    email: Joi.string().trim().lowercase().email().required().messages({
+        'string.empty': 'Email is required',
+        'string.email': 'Please enter a valid email address',
+        'any.required': 'Email is required',
+    }),
+    password: Joi.string()
+        .min(8)
+        .max(50)
+        .pattern(/[a-z]/, 'lowercase')
+        .pattern(/[A-Z]/, 'uppercase')
+        .pattern(/[0-9]/, 'number')
+        .pattern(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/, 'special character')
+        .required()
+        .messages({
+            'string.empty': 'Password is required',
+            'string.min': 'Password must be at least 8 characters long',
+            'string.max': 'Password cannot exceed 50 characters',
+            'string.pattern.name':
+                'Password must contain at least one {#name}.',
+            'any.required': 'Password is required',
+        }),
+});
