@@ -1,10 +1,11 @@
 import { Schema, model } from 'mongoose';
 
 import {
-    ClientPlatform,
+    // ClientPlatform,
     IClientDocument,
     TokenTransport,
 } from '../types/client.types';
+import { SessionPlatform } from '@/modules/session/types/session.types';
 
 const ClientSchema = new Schema<IClientDocument>(
     {
@@ -30,8 +31,10 @@ const ClientSchema = new Schema<IClientDocument>(
         },
 
         platform: {
-            type: String,
-            enum: Object.values(ClientPlatform),
+            type: Number,
+            enum: Object.values(SessionPlatform).filter(
+                (value): value is number => typeof value === 'number',
+            ),
             required: true,
             index: true,
         },

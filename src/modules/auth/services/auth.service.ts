@@ -3,6 +3,8 @@ import { authRepository } from '../repository/auth.repository';
 import { RegisterDTO } from '../dto/register.dto';
 import clientService from '@/modules/client/services/client.service';
 import { roleRepository } from '@/modules/Role/repository/role.repository';
+import jwtUtil from '@/utils/jwt.util';
+import sessionService from '@/modules/session/service/session.service';
 
 class AuthService {
     async registerUser(data: RegisterDTO) {
@@ -35,6 +37,7 @@ class AuthService {
             throw APIError.internal('Default role is not configured');
         }
 
+        // Create User.
         const user = await authRepository.createUser({
             name: data.name,
             email: data.email,
@@ -43,15 +46,61 @@ class AuthService {
             role: defaultRole._id,
         });
 
-       
+        // Create refresh token
+        const refreshToken = jwtUtil.generateRefreshToken();
+        // Only HashedRefresh token saved in session.
+        const refreshTokenHash = jwtUtil.hashRefreshToken(refreshToken);
+
+        // 30 Days.
+        const refreshTokenExpiresAt = new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
+        );
+
+        // Create session
+        const session = await sessionService.createSession({
+            userId: user._id,
+            clientId: client._id,
+            refreshTokenHash,
+            deviceId: data.deviceId ?? null,
+            deviceName: data.deviceName ?? null,
+            platform: client.platform,
+            browser: data.browser ?? null,
+            os: data.os ?? null,
+            ipAddress: data.ipAddress,
+            userAgent: data.userAgent,
+            expiresAt: refreshTokenExpiresAt,
+            lastUsedAt: new Date(),
+            isRevoked: false,
+        });
+
+        const permissions = defaultRole.permissions.map(
+            (permission: any) => permission.slug,
+        );
+        // 8. Generate access token
+        const accessToken = jwtUtil.generateAccessToken({
+            sub: user._id.toString(),
+            sessionId: session._id.toString(),
+            role: defaultRole.slug,
+            permissions,
+            clientId: client.clientId,
+        });
+        // 9. Return tokens
 
         return {
             success: true,
             statusCode: 201,
             message: 'User registered successfully',
             data: {
-                Name: 'John Doe',
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                },
+                accessToken,
+                refreshToken,
             },
+            tokenTransport: client.tokenTransport,
         };
     }
 }

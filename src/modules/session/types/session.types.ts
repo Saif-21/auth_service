@@ -1,6 +1,5 @@
 import {
     SESSION_PLATFORM_API,
-    SESSION_PLATFORM_DESKTOP,
     SESSION_PLATFORM_MOBILE,
     SESSION_PLATFORM_WEB,
 } from '@/constants/session.constant';
@@ -9,7 +8,6 @@ import { Document, Types } from 'mongoose';
 export enum SessionPlatform {
     WEB = SESSION_PLATFORM_WEB,
     MOBILE = SESSION_PLATFORM_MOBILE,
-    DESKTOP = SESSION_PLATFORM_DESKTOP,
     API = SESSION_PLATFORM_API,
 }
 
@@ -17,13 +15,13 @@ export interface ISession {
     userId: Types.ObjectId;
     clientId: Types.ObjectId;
     refreshTokenHash: string;
-    deviceId?: string;
-    deviceName?: string;
+    deviceId?: string | null;
+    deviceName?: string | null;
     platform: SessionPlatform;
-    browser?: string;
-    os?: string;
+    browser?: string | null;
+    os?: string | null;
     ipAddress: string
-    userAgent?: string;
+    userAgent?: string | null;
     expiresAt: Date;
     lastUsedAt: Date;
     isRevoked: boolean;
