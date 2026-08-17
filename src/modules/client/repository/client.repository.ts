@@ -24,9 +24,7 @@ class ClientRepository {
     /**
      * Find Client By Mongo Id
      */
-    async findById(
-        id: string | Types.ObjectId,
-    ) {
+    async findById(id: string | Types.ObjectId) {
         return await ClientModel.findById(id);
     }
 
@@ -34,9 +32,7 @@ class ClientRepository {
      * Find Client By Client Id
      */
     async findByClientId(clientId: string) {
-        return await ClientModel.findOne({
-            clientId,
-        });
+        return await ClientModel.findOne({ _id: clientId });
     }
 
     /**
@@ -52,10 +48,7 @@ class ClientRepository {
     /**
      * Update Client
      */
-    async update(
-        id: string | Types.ObjectId,
-        payload: Partial<ClientDTO>,
-    ) {
+    async update(id: string | Types.ObjectId, payload: Partial<ClientDTO>) {
         return await ClientModel.findByIdAndUpdate(id, payload, {
             returnDocument: 'after',
             runValidators: true,
@@ -66,7 +59,7 @@ class ClientRepository {
      * Delete Client
      */
     async delete(id: string | Types.ObjectId) {
-        return await ClientModel.findByIdAndDelete(id);         
+        return await ClientModel.findByIdAndDelete(id);
     }
 }
 

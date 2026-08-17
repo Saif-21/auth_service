@@ -4,9 +4,10 @@ class AuthRepository {
     async findUserByEmail(
         email: string,
     ): Promise<IUserWithPopulatedRole | null> {
-        const user = await userModel.findOne({
-            email: email.trim().toLowerCase(),
-        })
+        const user = await userModel
+            .findOne({
+                email: email.trim().toLowerCase(),
+            })
             .select('+password')
             .populate({
                 path: 'role',
@@ -17,6 +18,10 @@ class AuthRepository {
             .exec();
 
         return user as IUserWithPopulatedRole | null;
+    }
+    
+    async findById(id: string) {
+        return userModel.findById(id).exec();
     }
 
     async findUserByPhone(phone: string) {
@@ -43,6 +48,15 @@ class AuthRepository {
 
     async findUserByRole(roleId: string) {
         return userModel.find({ role: roleId });
+    }
+
+    async update(id: string, payload: Partial<IUser>) {
+        return userModel
+            .findByIdAndUpdate(id, payload, {
+                new: true,
+                runValidators: true,
+            })
+            .exec();
     }
 }
 

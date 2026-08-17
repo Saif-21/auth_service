@@ -74,3 +74,31 @@ export const LoginJoiSchema = Joi.object({
             'any.required': 'Password is required',
         }),
 });
+
+export const ForgotPasswordJoiSchema = Joi.object({
+    email: Joi.string().email().required().messages({
+        'string.email': 'Please provide a valid email address.',
+        'any.required': 'Email is required.',
+    }),
+});
+
+export const ResetPasswordJoiSchema = Joi.object({
+    token: Joi.string().required().messages({
+        'any.required': 'Reset token is required.',
+    }),
+
+    password: Joi.string().min(8).max(128).required().messages({
+        'string.min': 'Password must be at least 8 characters.',
+        'any.required': 'Password is required.',
+    }),
+});
+
+export const UpdateProfileJoiSchema = Joi.object({
+    name: Joi.string().trim().min(2).max(100).optional(),
+    phone: Joi.string().trim().optional(),
+    avatar: Joi.string().uri().allow(null, '').optional(),
+})
+    .min(1)
+    .messages({
+        'object.min': 'At least one field is required.',
+    });

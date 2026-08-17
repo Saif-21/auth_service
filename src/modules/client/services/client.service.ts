@@ -66,10 +66,7 @@ class ClientService {
     /**
      * Update Client
      */
-    async updateClient(
-        id: string,
-        payload: Partial<ClientDTO>,
-    ) {
+    async updateClient(id: string, payload: Partial<ClientDTO>) {
         const client = await clientRepository.findById(id);
 
         if (!client) {
@@ -101,7 +98,6 @@ class ClientService {
             message: 'Client deleted successfully.',
             data: result,
         };
-
     }
 
     /**
