@@ -30,7 +30,9 @@ const SessionSchema = new Schema<ISessionDocument>(
         },
         platform: {
             type: Number,
-            enum: Object.values(SessionPlatform),
+            enum: Object.values(SessionPlatform).filter(
+                (value): value is number => typeof value === 'number',
+            ),
             required: true,
             index: true,
         },
@@ -53,7 +55,6 @@ const SessionSchema = new Schema<ISessionDocument>(
         expiresAt: {
             type: Date,
             required: true,
-            index: true,
         },
         lastUsedAt: {
             type: Date,
@@ -85,11 +86,6 @@ SessionSchema.index({
     userId: 1,
     clientId: 1,
 });
-
-SessionSchema.index({
-    expiresAt: 1,
-});
-
 
 SessionSchema.index(
     { expiresAt: 1 },

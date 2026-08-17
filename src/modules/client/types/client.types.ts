@@ -1,10 +1,10 @@
+import {
+    SESSION_PLATFORM_API,
+    SESSION_PLATFORM_MOBILE,
+    SESSION_PLATFORM_WEB,
+} from '@/constants/session.constant';
+import { SessionPlatform } from '@/modules/session/types/session.types';
 import { Document } from 'mongoose';
-
-export enum ClientPlatform {
-    WEB = 'web',
-    MOBILE = 'mobile',
-    API = 'api',
-}
 
 export enum TokenTransport {
     COOKIE = 'cookie',
@@ -13,17 +13,11 @@ export enum TokenTransport {
 
 export interface IClient {
     name: string;
-
     clientId: string;
-
     clientSecret: string;
-
-    platform: ClientPlatform;
-
+    platform: SessionPlatform;
     tokenTransport: TokenTransport;
-
     allowedOrigins: string[];
-
     isActive: boolean;
 }
 

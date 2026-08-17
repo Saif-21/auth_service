@@ -17,7 +17,7 @@ export const loadRoutes = (app: Express) => {
     const routeDir = path.join(modulesPath, moduleName, 'routes');
 
     if (!fs.existsSync(routeDir)) {
-      console.log(chalk.red(`No routes folder in module: ${moduleName}`));
+      console.log(chalk.yellowBright(`No routes folder in module: ${moduleName}`));
       continue;
     }
 

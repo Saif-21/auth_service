@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import APIError from './api-error';
+import { errorResponse } from '../apiError';
 
 export const errorHandler = (
     error: any,
@@ -42,6 +43,7 @@ export const errorHandler = (
 
     const response: any = {
         success: false,
+        statusCode,
         message,
     };
 
@@ -50,5 +52,6 @@ export const errorHandler = (
     }
 
     console.error(`Error: ${message}`);
-    res.status(statusCode).json(response);
+    // res.status(statusCode).json(response);
+    errorResponse(res,  response);
 };

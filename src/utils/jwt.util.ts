@@ -1,3 +1,4 @@
+import { config } from '@/config/config';
 import crypto from 'crypto';
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken';
 
@@ -18,9 +19,9 @@ class JwtUtil {
             payload,
             process.env.JWT_ACCESS_SECRET as string,
             {
-                expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
-                issuer: process.env.JWT_ISSUER,
-                audience: process.env.JWT_AUDIENCE,
+                expiresIn: config.JWT_ACCESS_EXPIRES_IN || '15m',
+                issuer: config.JWT_ISSUER,
+                audience: config.JWT_AUDIENCE,
             } as SignOptions,
         );
     }
@@ -29,9 +30,9 @@ class JwtUtil {
      * Verify Access Token
      */
     verifyAccessToken(token: string): AccessTokenPayload {
-        return jwt.verify(token, process.env.JWT_ACCESS_SECRET as string, {
-            issuer: process.env.JWT_ISSUER,
-            audience: process.env.JWT_AUDIENCE,
+        return jwt.verify(token, config.JWT_ACCESS_SECRET as string, {
+            issuer: config.JWT_ISSUER,
+            audience: config.JWT_AUDIENCE,
         }) as AccessTokenPayload;
     }
 
@@ -53,6 +54,14 @@ class JwtUtil {
      * Hash Refresh Token
      */
     hashRefreshToken(token: string): string {
+        return crypto.createHash('sha256').update(token).digest('hex');
+    }
+
+    generatePasswordResetToken(): string {
+        return crypto.randomBytes(32).toString('hex');
+    }
+
+    hashPasswordResetToken(token: string): string {
         return crypto.createHash('sha256').update(token).digest('hex');
     }
 }
